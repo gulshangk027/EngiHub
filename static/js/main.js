@@ -63,3 +63,13 @@ function showToast(msg, type = 'info') {
   container.insertAdjacentHTML('beforeend', html);
   setTimeout(() => document.getElementById(id)?.remove(), 4000);
 }
+
+// ── Service Worker Registration for PWA ─────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('Service Worker registered successfully with scope:', reg.scope))
+      .catch(err => console.error('Service Worker registration failed:', err));
+  });
+}
+
