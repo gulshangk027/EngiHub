@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+{% block title %}Interview Prep — EngiHub{% endblock %}
+
+{% block content %}
+<div id="toastContainer"></div>
+
+<!-- Page Header -->
+<section class="page-hero">
+  <div class="container position-relative">
+    <div class="page-hero-icon" style="--clr:#ec4899"><i class="bi bi-mic-fill"></i></div>
+    <h1 class="page-title">Interview Prep</h1>
+    <p class="text-muted mt-2">Branch-wise question bank + AI-generated live mock questions.</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- AI Mock Generator -->
+      <div class="col-lg-4">
+        <div class="eh-card sticky-top" style="top:80px">
+          <h5 class="fw-bold mb-4"><i class="bi bi-stars text-pink me-2" style="color:#ec4899"></i>AI Mock Question</h5>
+
+          <div class="mb-3">
+            <label class="form-label">Branch</label>
+            <select class="form-select" id="mockBranch">
+              {% for b in branches %}<option>{{ b }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Topic</label>
+            <input class="form-control" id="mockTopic" placeholder="e.g. MOSFET, Recursion, SQL…" />
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Difficulty</label>
+            <div class="d-flex gap-2">
+              {% for d in difficulties %}
+              <label class="d-flex align-items-center gap-1 small fw-500 cursor-pointer">
+                <input type="radio" name="difficulty" value="{{ d }}" {% if d=='Medium' %}checked{% endif %}> {{ d }}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <button class="btn btn-primary-glow w-100" onclick="generateMock()">
+            <i class="bi bi-lightning-charge-fill me-2"></i>Generate Question
+          </button>
+
+          <div id="mockResult" class="mt-4 d-none">
+            <div class="p-3 rounded-3" style="background:var(--bg-3);border:1px solid var(--border)">
+              <div id="mockContent" class="mock-body"></div>
+              <div class="text-end mt-2">
+                <small class="text-muted" id="mockModel"></small>
+              </div>
+            </div>
+          </div>
+          <div id="mockLoading" class="text-center py-4 d-none">
+            <div class="spinner-border text-primary"></div>
+          </div>
+          <div id="mockError" class="text-danger small mt-3 d-none"></div>
+        </div>
+      </div>
+
+      <!-- Question Bank -->
+      <div class="col-lg-8">
+        <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+          <h5 class="fw-bold mb-0">Question Bank</h5>
+          <div class="d-flex gap-2 flex-wrap ms-auto">
+            <select class="form-select form-select-sm" id="filterBranch" onchange="filterQbank()" style="width:auto">
+              <option value="All">All Branches</option>
+              {% for b in branches %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
+            </select>
+            <select class="form-select form-select-sm" id="filterDiff" onchange="filterQbank()" style="width:auto">
+              <option value="">All Levels</option>
+              {% for d in difficulties %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Topic Search Bar -->
+        <div class="input-group mb-3">
+          <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+          <input type="text" id="qbankSearchInput" class="form-control border-start-0" 
+                 placeholder="Search topic (e.g. MOSFET, Recursion, OOP, Signals)..." 
+                 onkeydown="handleQbankSearchKey(event)" />
+          <button class="btn btn-primary-glow px-4" id="qbankSearchBtn" onclick="searchQbankTopic()">
+            <i class="bi bi-stars me-1"></i>Search &amp; AI Expand
+          </button>
+          <button class="btn btn-outline-glow px-3 d-none" id="qbankClearBtn" onclick="clearQbankSearch()">
+            <i class="bi bi-x-circle me-1"></i>Clear
+          </button>
+        </div>
+
+        <!-- Status & Source Note -->
+        <div id="qbankStatusNote" class="alert alert-info alert-dismissible fade show small py-2 px-3 mb-3 d-none" role="alert">
+          <span id="qbankStatusText"></span>
+        </div>
+
+        <!-- AI Generation Loading Indicator -->
+        <div id="qbankLoading" class="text-center py-4 d-none">
+          <div class="spinner-border text-primary mb-2" style="width:2.2rem;height:2.2rem"></div>
+          <p class="text-muted small mb-0"><i class="bi bi-cpu me-1"></i>Searching question bank &amp; generating AI questions with watsonx.ai…</p>
+        </div>
+
+        <div id="qbankList" class="d-flex flex-column gap-3">
+          {% for branch, branch_data in qbank.items() %}
+          {% for q in branch_data.get("questions", []) %}
+          <div class="qa-card"
+            data-branch="{{ branch }}"
+            data-diff="{{ q.difficulty }}"
+            onclick="toggleQA(this)">
+            <div class="d-flex justify-content-between align-items-start gap-3">
+              <p class="fw-500 small mb-0">{{ q.q }}</p>
+              <div class="d-flex flex-shrink-0 gap-1">
+                <span class="resource-tag" style="background:rgba(99,102,241,0.12);color:var(--primary-2);border:1px solid rgba(99,102,241,0.25);font-size:.7rem">{{ branch }}</span>
+                <span class="resource-tag {% if q.difficulty=='Easy' %}tag-paid{% elif q.difficulty=='Hard' %}tag-unpaid{% else %}tag-article{% endif %}">{{ q.difficulty }}</span>
+              </div>
+            </div>
+            <div class="qa-answer">{{ q.answer }}</div>
+          </div>
+          {% endfor %}
+          {% endfor %}
+        </div>
+
+        <div id="noQbankResults" class="text-center py-5 d-none">
+          <div style="font-size:3rem;opacity:.2">🔍</div>
+          <p class="text-muted mt-2">No questions match your selected filters or topic search.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+  .mock-body h1,.mock-body h2,.mock-body h3{font-size:.95rem;font-weight:700;color:var(--primary-2);margin:.6rem 0 .3rem}
+  .mock-body p,.mock-body li{font-size:.88rem;color:var(--text-muted)}
+  .cursor-pointer{cursor:pointer}
+</style>
+<script>
+let initialQbankHTML = '';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const box = document.getElementById('qbankList');
+  if (box) initialQbankHTML = box.innerHTML;
+});
+
+function toggleQA(card) {
+  card.classList.toggle('open');
+}
+
+function escHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function filterQbank() {
+  const branch = document.getElementById('filterBranch').value;
+  const diff   = document.getElementById('filterDiff').value;
+  let visibleCount = 0;
+  
+  document.querySelectorAll('.qa-card').forEach(card => {
+    const bMatch = (branch === 'All') || (card.dataset.branch === branch);
+    const dMatch = !diff || card.dataset.diff === diff;
+    const show = bMatch && dMatch;
+    card.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
+  });
+
+  const emptyMsg = document.getElementById('noQbankResults');
+  if (emptyMsg) {
+    emptyMsg.classList.toggle('d-none', visibleCount > 0);
+  }
+}
+
+function handleQbankSearchKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    searchQbankTopic();
+  }
+}
+
+async function searchQbankTopic() {
+  const topicInput = document.getElementById('qbankSearchInput');
+  const topic = topicInput.value.trim();
+  if (!topic) return;
+
+  const branch = document.getElementById('filterBranch').value;
+  const difficulty = document.getElementById('filterDiff').value;
+
+  const qbankList = document.getElementById('qbankList');
+  const qbankLoading = document.getElementById('qbankLoading');
+  const statusNote = document.getElementById('qbankStatusNote');
+  const statusText = document.getElementById('qbankStatusText');
+  const clearBtn = document.getElementById('qbankClearBtn');
+
+  qbankList.classList.add('d-none');
+  document.getElementById('noQbankResults')?.classList.add('d-none');
+  statusNote.classList.add('d-none');
+  qbankLoading.classList.remove('d-none');
+
+  try {
+    const res = await fetch('/interview/search', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ topic, branch, difficulty })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to fetch topic questions');
+
+    renderSearchResults(data.static_questions || [], data.ai_questions || [], topic);
+    
+    clearBtn.classList.remove('d-none');
+
+    // Update status note banner
+    const staticCount = (data.static_questions || []).length;
+    const aiCount = (data.ai_questions || []).length;
+
+    if (data.source === 'static_only') {
+      statusNote.className = 'alert alert-warning alert-dismissible fade show small py-2 px-3 mb-3';
+      statusText.innerHTML = `<i class="bi bi-exclamation-triangle me-1"></i>Showing <strong>${staticCount}</strong> static questions only (AI generation offline/unavailable).`;
+    } else if (data.source === 'cache') {
+      statusNote.className = 'alert alert-info alert-dismissible fade show small py-2 px-3 mb-3';
+      statusText.innerHTML = `<i class="bi bi-lightning-charge me-1"></i>Found <strong>${staticCount}</strong> static bank questions + <strong>${aiCount}</strong> cached AI questions for <em>"${escHtml(topic)}"</em>.`;
+    } else {
+      statusNote.className = 'alert alert-success alert-dismissible fade show small py-2 px-3 mb-3';
+      statusText.innerHTML = `<i class="bi bi-check-circle me-1"></i>Found <strong>${staticCount}</strong> static bank questions + generated <strong>${aiCount}</strong> new AI questions using IBM watsonx.ai for <em>"${escHtml(topic)}"</em>.`;
+    }
+    statusNote.classList.remove('d-none');
+
+  } catch(e) {
+    showToast(e.message, 'danger');
+  } finally {
+    qbankLoading.classList.add('d-none');
+    qbankList.classList.remove('d-none');
+  }
+}
+
+function renderSearchResults(staticQs, aiQs, topic) {
+  const qbankList = document.getElementById('qbankList');
+  qbankList.innerHTML = '';
+
+  const allQuestions = [...staticQs, ...aiQs];
+
+  if (allQuestions.length === 0) {
+    document.getElementById('noQbankResults')?.classList.remove('d-none');
+    return;
+  }
+
+  allQuestions.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'qa-card';
+    card.dataset.branch = q.branch || 'ECE';
+    card.dataset.diff = q.difficulty || 'Medium';
+    card.onclick = function() { toggleQA(this); };
+
+    const diffClass = q.difficulty === 'Easy' ? 'tag-paid' : (q.difficulty === 'Hard' ? 'tag-unpaid' : 'tag-article');
+    const aiTag = q.is_ai ? `<span class="resource-tag tag-tool" style="font-size:.7rem"><i class="bi bi-cpu me-1"></i>AI Generated</span>` : '';
+
+    card.innerHTML = `
+      <div class="d-flex justify-content-between align-items-start gap-3">
+        <p class="fw-500 small mb-0">${escHtml(q.q)}</p>
+        <div class="d-flex flex-shrink-0 gap-1 align-items-center">
+          ${aiTag}
+          <span class="resource-tag" style="background:rgba(99,102,241,0.12);color:var(--primary-2);border:1px solid rgba(99,102,241,0.25);font-size:.7rem">${escHtml(q.branch)}</span>
+          <span class="resource-tag ${diffClass}">${escHtml(q.difficulty)}</span>
+        </div>
+      </div>
+      <div class="qa-answer">${escHtml(q.answer)}</div>
+    `;
+
+    qbankList.appendChild(card);
+  });
+
+  filterQbank();
+}
+
+function clearQbankSearch() {
+  document.getElementById('qbankSearchInput').value = '';
+  document.getElementById('qbankClearBtn').classList.add('d-none');
+  document.getElementById('qbankStatusNote').classList.add('d-none');
+  
+  const box = document.getElementById('qbankList');
+  if (box && initialQbankHTML) {
+    box.innerHTML = initialQbankHTML;
+  }
+  filterQbank();
+}
+
+// initialise — show all on load
+filterQbank();
+
+async function generateMock() {
+  const branch     = document.getElementById('mockBranch').value;
+  const topic      = document.getElementById('mockTopic').value.trim() || 'General';
+  const difficulty = document.querySelector('input[name="difficulty"]:checked')?.value || 'Medium';
+
+  document.getElementById('mockResult').classList.add('d-none');
+  document.getElementById('mockError').classList.add('d-none');
+  document.getElementById('mockLoading').classList.remove('d-none');
+
+  try {
+    const res  = await fetch('/interview/generate-question', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({branch, topic, difficulty})
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+    document.getElementById('mockContent').innerHTML = marked.parse(data.question || '');
+    document.getElementById('mockModel').textContent = '⚡ ' + (data.model_used || '');
+    document.getElementById('mockResult').classList.remove('d-none');
+  } catch(e) {
+    document.getElementById('mockError').textContent = '⚠️ ' + e.message;
+    document.getElementById('mockError').classList.remove('d-none');
+    showToast(e.message, 'danger');
+  } finally {
+    document.getElementById('mockLoading').classList.add('d-none');
+  }
+}
+</script>
+{% endblock %}
+

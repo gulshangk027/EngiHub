@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}Career Advisory — EngiHub{% endblock %}
+
+{% block content %}
+<div id="toastContainer"></div>
+
+<!-- Page Header -->
+<section class="page-hero">
+  <div class="container position-relative">
+    <div class="page-hero-icon" style="--clr:#f59e0b"><i class="bi bi-compass-fill"></i></div>
+    <h1 class="page-title">Career Advisory</h1>
+    <p class="text-muted mt-2">Get a personalised AI-generated career roadmap for your target engineering domain.</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- Form Panel -->
+      <div class="col-lg-5">
+        <div class="eh-card sticky-top" style="top: 80px">
+          <h5 class="fw-bold mb-4"><i class="bi bi-sliders me-2 text-warning"></i>Your Profile</h5>
+
+          <div class="mb-3">
+            <label class="form-label">Engineering Branch</label>
+            <select class="form-select" id="careerBranch">
+              {% for b in branches %}
+              <option>{{ b }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Career Goal</label>
+            <select class="form-select" id="careerGoal">
+              {% for g in goals %}
+              <option>{{ g }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Your Interests <span class="text-muted">(e.g. VLSI, web dev, robotics)</span></label>
+            <textarea class="form-control" id="careerInterests" rows="2" placeholder="Tell us what excites you…"></textarea>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Current Skills <span class="text-muted">(optional)</span></label>
+            <textarea class="form-control" id="careerSkills" rows="2" placeholder="Python, C, MATLAB, etc."></textarea>
+          </div>
+
+          <button class="btn btn-primary-glow w-100" id="generateBtn" onclick="generateRoadmap()">
+            <i class="bi bi-stars me-2"></i>Generate My Roadmap
+          </button>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="col-lg-7">
+        <div class="eh-card h-100" id="resultPanel">
+
+          <!-- Empty State -->
+          <div id="emptyState" class="text-center py-5">
+            <div style="font-size:4rem;opacity:0.15">🗺️</div>
+            <h5 class="text-muted mt-3">Your roadmap will appear here</h5>
+            <p class="text-muted small">Fill in your profile and click Generate.</p>
+          </div>
+
+          <!-- Loading -->
+          <div id="loadingState" class="text-center py-5 d-none">
+            <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem"></div>
+            <h6 class="text-muted">EngiHub AI is crafting your roadmap…</h6>
+          </div>
+
+          <!-- Roadmap Output -->
+          <div id="roadmapOutput" class="d-none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0"><i class="bi bi-map-fill text-warning me-2"></i>Your Career Roadmap</h5>
+              <div class="d-flex gap-2">
+                <span class="resource-tag tag-tool" id="modelBadge"></span>
+                <button class="btn btn-sm btn-outline-glow" onclick="copyRoadmap()"><i class="bi bi-copy me-1"></i>Copy</button>
+              </div>
+            </div>
+            <div id="roadmapContent" class="roadmap-body"></div>
+          </div>
+
+          <!-- Error -->
+          <div id="errorState" class="text-center py-5 d-none">
+            <div style="font-size:3rem">⚠️</div>
+            <h6 class="text-danger mt-2" id="errorMsg"></h6>
+            <button class="btn btn-outline-glow btn-sm mt-2" onclick="generateRoadmap()">Retry</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<style>
+  .roadmap-body h1,.roadmap-body h2,.roadmap-body h3{font-size:1.05rem;font-weight:700;color:var(--primary-2);margin:1.2rem 0 0.4rem}
+  .roadmap-body p{margin-bottom:.6rem;color:var(--text-muted);font-size:.9rem}
+  .roadmap-body ul{padding-left:1.3rem;margin-bottom:.6rem}
+  .roadmap-body li{margin-bottom:.3rem;font-size:.9rem;color:var(--text-muted)}
+  .roadmap-body strong{color:var(--text)}
+</style>
+<script>
+async function generateRoadmap() {
+  const branch    = document.getElementById('careerBranch').value;
+  const goal      = document.getElementById('careerGoal').value;
+  const interests = document.getElementById('careerInterests').value.trim();
+  const skills    = document.getElementById('careerSkills').value.trim();
+
+  if (!interests) { showToast('Please describe your interests.', 'warning'); return; }
+
+  setState('loading');
+  try {
+    const res = await fetch('/career/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({branch, goal, interests, skills})
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+
+    document.getElementById('roadmapContent').innerHTML = marked.parse(data.roadmap || '');
+    document.getElementById('modelBadge').textContent = '⚡ ' + (data.model_used || 'Granite 8B');
+    setState('result');
+  } catch(e) {
+    document.getElementById('errorMsg').textContent = e.message;
+    setState('error');
+  }
+}
+
+function setState(s) {
+  ['emptyState','loadingState','roadmapOutput','errorState'].forEach(id => {
+    document.getElementById(id)?.classList.add('d-none');
+  });
+  const map = {empty:'emptyState',loading:'loadingState',result:'roadmapOutput',error:'errorState'};
+  document.getElementById(map[s])?.classList.remove('d-none');
+}
+
+function copyRoadmap() {
+  const text = document.getElementById('roadmapContent').innerText;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!', 'success'));
+}
+</script>
+{% endblock %}

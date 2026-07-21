@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block title %}EngiHub — AI-Powered Engineering Student Platform{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero-section position-relative overflow-hidden">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+
+  <div class="container py-5 position-relative">
+    <div class="row align-items-center min-vh-80 py-5">
+      <div class="col-lg-6 animate__animated animate__fadeInLeft">
+
+        <!-- Pill badge -->
+        <div class="hero-badge mb-4">
+          <i class="bi bi-stars me-2"></i>
+          AI-Powered Engineering Companion
+        </div>
+
+        <h1 class="hero-title">
+          Your AI Study<br />
+          <span class="gradient-text">Companion</span><br />
+          for Engineering
+        </h1>
+
+        <p class="hero-subtitle mt-4">
+          EngiHub brings together AI-powered doubt solving, personalized career roadmaps,
+          interview prep, research resources, and internship listings — all in one platform
+          built for <strong>ECE, CSE, EEE, MECH, CIVIL</strong> and more.
+        </p>
+
+        <!-- Branch Selector -->
+        <div class="branch-selector mt-4 mb-5">
+          <label class="form-label text-muted small mb-2">Select Your Branch →</label>
+          <div class="d-flex flex-wrap gap-2">
+            {% for b in branches %}
+            <a href="{{ url_for('doubt.index') }}?branch={{ b }}" class="branch-chip">{{ b }}</a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{{ url_for('doubt.index') }}" class="btn btn-primary-glow btn-lg">
+            <i class="bi bi-chat-dots-fill me-2"></i>Ask AI Now
+          </a>
+          <a href="{{ url_for('career.index') }}" class="btn btn-outline-glow btn-lg">
+            <i class="bi bi-compass me-2"></i>Career Roadmap
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats mt-5">
+          <div class="stat-item">
+            <span class="stat-number">7</span>
+            <span class="stat-label">AI Modules</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">6</span>
+            <span class="stat-label">Branches</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">∞</span>
+            <span class="stat-label">AI Answers</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Illustration -->
+      <div class="col-lg-6 mt-5 mt-lg-0 animate__animated animate__fadeInRight">
+        <div class="hero-card-stack">
+          <div class="floating-card card-1">
+            <i class="bi bi-chat-dots-fill text-primary me-2"></i>
+            <span>How does FFT work?</span>
+            <div class="typing-indicator"><span></span><span></span><span></span></div>
+          </div>
+          <div class="floating-card card-2">
+            <i class="bi bi-stars text-warning me-2"></i>
+            <span>AI Career Roadmap Generated ✓</span>
+          </div>
+          <div class="floating-card card-3">
+            <i class="bi bi-briefcase-fill text-success me-2"></i>
+            <span>10 Internships Found for ECE</span>
+          </div>
+          <div class="hero-orb">
+            <i class="bi bi-cpu-fill"></i>
+            <div class="orb-ring orb-ring-1"></div>
+            <div class="orb-ring orb-ring-2"></div>
+            <div class="orb-ring orb-ring-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ MODULES GRID ═══════════════════ -->
+<section class="modules-section py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-badge">Everything You Need</span>
+      <h2 class="section-title mt-3">7 Powerful Modules</h2>
+      <p class="section-subtitle">From AI-powered tutoring to placement prep — EngiHub covers your entire engineering journey.</p>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- Doubt Solver -->
+      <div class="col-lg-4 col-md-6">
+        <a href="{{ url_for('doubt.index') }}" class="module-card-link">
+          <div class="module-card animate__animated animate__fadeInUp" style="--delay: 0.1s">
+            <div class="module-icon-wrap" style="--clr: #6366f1">
+              <i class="bi bi-chat-dots-fill"></i>
+            </div>
+            <div class="module-ai-badge"><i class="bi bi-stars me-1"></i>AI</div>
+            <h3 class="module-title">Doubt Solver</h3>
+            <p class="module-desc">Ask any engineering question and get instant AI-generated explanations, step-by-step solutions, and exam-ready answers.</p>
+            <div class="module-tags">
+              <span class="mtag">Live AI Chat</span>
+              <span class="mtag">Branch-wise</span>
+              <span class="mtag">Hinglish OK</span>
+            </div>
+            <div class="module-arrow"><i class="bi bi-arrow-right"></i></div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Career Advisory -->
+      <div class="col-lg-4 col-md-6">
+        <a href="{{ url_for('career.index') }}" class="module-card-link">
+          <div class="module-card animate__animated animate__fadeInUp" style="--delay: 0.2s">
+            <div class="module-icon-wrap" style="--clr: #f59e0b">
+              <i class="bi bi-compass-fill"></i>
+            </div>
+            <div class="module-ai-badge"><i class="bi bi-stars me-1"></i>AI</div>
+            <h3 class="module-title">Career Advisory</h3>
+            <p class="module-desc">Get a personalized career roadmap based on your branch, interests, and goals — with specific skills, certs, and timelines.</p>
+            <div class="module-tags">
+              <span class="mtag">AI Roadmap</span>
+              <span class="mtag">Year-by-year</span>
+              <span class="mtag">Skills Plan</span>
+            </div>
+            <div class="module-arrow"><i class="bi bi-arrow-right"></i></div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Interview Prep -->
+      <div class="col-lg-4 col-md-6">
+        <a href="{{ url_for('interview.index') }}" class="module-card-link">
+          <div class="module-card animate__animated animate__fadeInUp" style="--delay: 0.3s">
+            <div class="module-icon-wrap" style="--clr: #ec4899">
+              <i class="bi bi-mic-fill"></i>
+            </div>
+            <div class="module-ai-badge"><i class="bi bi-stars me-1"></i>AI</div>
+            <h3 class="module-title">Interview Prep</h3>
+            <p class="module-desc">Branch-wise question bank + live AI-generated mock interview questions with model answers on any topic you choose.</p>
+            <div class="module-tags">
+              <span class="mtag">Question Bank</span>
+              <span class="mtag">AI Mock Q</span>
+              <span class="mtag">All Levels</span>
+            </div>
+            <div class="module-arrow"><i class="bi bi-arrow-right"></i></div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Internship Portal -->
+      <div class="col-lg-4 col-md-6">
+        <a href="{{ url_for('internship.index') }}" class="module-card-link">
+          <div class="module-card animate__animated animate__fadeInUp" style="--delay: 0.4s">
+            <div class="module-icon-wrap" style="--clr: #10b981">
+              <i class="bi bi-briefcase-fill"></i>
+            </div>
+            <h3 class="module-title">Internship Portal</h3>
+            <p class="module-desc">Filter internships by branch, location, and type. Discover opportunities at top companies like Microsoft, NVIDIA, IBM, TI, and more.</p>
+            <div class="module-tags">
+              <span class="mtag">Filtered Search</span>
+              <span class="mtag">Top Companies</span>
+              <span class="mtag">Paid/Remote</span>
+            </div>
+            <div class="module-arrow"><i class="bi bi-arrow-right"></i></div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Research Hub -->
+      <div class="col-lg-4 col-md-6">
+        <a href="{{ url_for('research.index') }}" class="module-card-link">
+          <div class="module-card animate__animated animate__fadeInUp" style="--delay: 0.5s">
+            <div class="module-icon-wrap" style="--clr: #3b82f6">
+              <i class="bi bi-journal-bookmark-fill"></i>
+            </div>
+            <h3 class="module-title">Research Hub</h3>
+            <p class="module-desc">Curated papers, articles, datasets, tools, and courses — filtered by branch. Stay updated with what's cutting edge in your field.</p>
+            <div class="module-tags">
+              <span class="mtag">Papers</span>
+              <span class="mtag">Tools & Datasets</span>
+              <span class="mtag">Branch Filtered</span>
+            </div>
+            <div class="module-arrow"><i class="bi bi-arrow-right"></i></div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Placement Guidance -->
+      <div class="col-lg-4 col-md-6">
+        <a href="{{ url_for('placement.index') }}" class="module-card-link">
+          <div class="module-card animate__animated animate__fadeInUp" style="--delay: 0.6s">
+            <div class="module-icon-wrap" style="--clr: #8b5cf6">
+              <i class="bi bi-award-fill"></i>
+            </div>
+            <h3 class="module-title">Placement Guidance</h3>
+            <p class="module-desc">Resume tips, aptitude resources, DSA roadmap, HR rounds, and company-specific prep strategies (FAANG, PSU, core engineering).</p>
+            <div class="module-tags">
+              <span class="mtag">Resume Tips</span>
+              <span class="mtag">Aptitude</span>
+              <span class="mtag">Company Prep</span>
+            </div>
+            <div class="module-arrow"><i class="bi bi-arrow-right"></i></div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
+<section class="how-section py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-badge">Engineered for Students</span>
+      <h2 class="section-title mt-3">How EngiHub Works</h2>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon"><i class="bi bi-person-circle"></i></div>
+          <h5>Select Your Branch</h5>
+          <p class="text-muted small">Choose ECE, CSE, EEE, Mech, Civil, or IT to get branch-specific content.</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon"><i class="bi bi-chat-text"></i></div>
+          <h5>Ask or Explore</h5>
+          <p class="text-muted small">Ask doubts in plain English or Hinglish, generate career roadmaps, or browse resources.</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon"><i class="bi bi-robot"></i></div>
+          <h5>AI Generates Answer</h5>
+          <p class="text-muted small">Granite AI model processes your query and returns a structured, accurate response.</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <h5>Grow & Apply</h5>
+          <p class="text-muted small">Use insights to crack exams, ace interviews, and apply to top internships — all from one hub.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CTA BANNER ═══════════════════ -->
+<section class="cta-section py-5 my-4">
+  <div class="container">
+    <div class="cta-card">
+      <div class="cta-glow"></div>
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h2 class="cta-title">Ready to study smarter?</h2>
+          <p class="cta-sub">Start with the AI Doubt Solver — ask your first engineering question right now.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+          <a href="{{ url_for('doubt.index') }}" class="btn btn-primary-glow btn-lg px-5">
+            <i class="bi bi-lightning-charge-fill me-2"></i>Get Started Free
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{
+  "ECE": {
+    "topics": ["Analog Circuits", "Digital Electronics", "Signals & Systems", "VLSI Design", "Communication Systems", "Embedded Systems", "Microprocessors", "Control Systems"],
+    "questions": [
+      {"q": "Explain the working of a MOSFET and compare it with a BJT.", "difficulty": "Medium", "answer": "MOSFET is a voltage-controlled device; BJT is current-controlled. MOSFETs have higher input impedance, making them ideal for digital ICs. BJTs have better transconductance at low currents."},
+      {"q": "What is Nyquist sampling theorem? Why is it important?", "difficulty": "Easy", "answer": "A signal must be sampled at ≥ 2× its highest frequency to be perfectly reconstructed. Below this rate, aliasing occurs. Foundational for all digital signal processing."},
+      {"q": "Explain the difference between RISC and CISC architectures.", "difficulty": "Medium", "answer": "RISC uses simple, fixed-length instructions optimized for pipelining (ARM). CISC has complex variable-length instructions that can do more per instruction (x86). Modern CPUs often blend both."},
+      {"q": "What is OFDM and where is it used?", "difficulty": "Hard", "answer": "Orthogonal Frequency Division Multiplexing splits a signal into orthogonal subcarriers, enabling high data rates with resilience to multipath fading. Used in LTE, 5G, WiFi, and DVB."},
+      {"q": "Explain setup time and hold time violations in digital circuits.", "difficulty": "Hard", "answer": "Setup time = data must be stable before clock edge. Hold time = data must remain stable after clock edge. Violations cause metastability, leading to unpredictable flip-flop outputs."}
+    ]
+  },
+  "CSE": {
+    "topics": ["Data Structures & Algorithms", "Operating Systems", "DBMS", "Computer Networks", "OOP", "System Design", "AI/ML Basics", "Web Development"],
+    "questions": [
+      {"q": "Explain the difference between a process and a thread.", "difficulty": "Easy", "answer": "A process is an independent program in execution with its own memory space. A thread is a lightweight unit of execution within a process, sharing the same memory. Threads are faster to create/switch."},
+      {"q": "What is a deadlock? What are the four necessary conditions?", "difficulty": "Medium", "answer": "Deadlock = circular waiting among processes. Four conditions (Coffman): 1) Mutual exclusion, 2) Hold and Wait, 3) No preemption, 4) Circular wait. All four must hold simultaneously."},
+      {"q": "Explain ACID properties in database transactions.", "difficulty": "Medium", "answer": "Atomicity (all or nothing), Consistency (valid state transitions), Isolation (concurrent transactions don't interfere), Durability (committed data persists). Ensures reliable DB operations."},
+      {"q": "Design a URL shortener like bit.ly at system design level.", "difficulty": "Hard", "answer": "Use a hash function (MD5/Base62) to generate short codes. Store in DB (URL → short code). Add caching (Redis) for hot URLs. Use CDN for global distribution. Handle ~100M read/day with horizontal scaling."},
+      {"q": "What is the time complexity of Dijkstra's algorithm?", "difficulty": "Medium", "answer": "With a binary heap: O((V + E) log V). With Fibonacci heap: O(E + V log V). For dense graphs, Floyd-Warshall O(V³) may be preferred."}
+    ]
+  },
+  "EEE": {
+    "topics": ["Power Systems", "Electrical Machines", "Control Systems", "Power Electronics", "Measurements", "High Voltage Engineering"],
+    "questions": [
+      {"q": "Explain the working principle of an induction motor.", "difficulty": "Easy", "answer": "The stator produces a rotating magnetic field. This field induces currents in the rotor (squirrel cage), which creates its own magnetic field. The interaction produces torque. The rotor always runs slightly below synchronous speed (slip)."},
+      {"q": "What is power factor and why does it matter?", "difficulty": "Easy", "answer": "Power factor = cos(φ) = ratio of real power (kW) to apparent power (kVA). Low PF means more current for the same work, increasing losses. Capacitor banks are used for PF correction."},
+      {"q": "Explain the operation of a PWM inverter.", "difficulty": "Hard", "answer": "PWM (Pulse Width Modulation) varies duty cycle of switch pulses to synthesize a sinusoidal output from a DC bus. High-frequency switching (IGBTs) with an LC filter gives smooth AC output for VFDs and UPS systems."}
+    ]
+  },
+  "MECH": {
+    "topics": ["Thermodynamics", "Fluid Mechanics", "Manufacturing", "Theory of Machines", "Strength of Materials", "CAD/CAM"],
+    "questions": [
+      {"q": "State and explain the laws of thermodynamics.", "difficulty": "Easy", "answer": "0th: Thermal equilibrium. 1st: Energy conservation (ΔU = Q - W). 2nd: Entropy always increases in isolated systems. 3rd: Absolute zero cannot be reached. Together they govern all heat engines."},
+      {"q": "Explain Bernoulli's theorem and its applications.", "difficulty": "Medium", "answer": "For ideal fluid: P + ½ρv² + ρgh = constant. Applications: Venturimeter, Pitot tube, aircraft lift, carburetor, and nozzle design."}
+    ]
+  },
+  "CIVIL": {
+    "topics": ["Structural Analysis", "Concrete Technology", "Geotechnical Engineering", "Surveying", "Transportation Engineering", "Environmental Engineering"],
+    "questions": [
+      {"q": "What is the water-cement ratio and how does it affect concrete strength?", "difficulty": "Easy", "answer": "W/C ratio = weight of water / weight of cement. Lower W/C → higher strength but lower workability. Typically 0.4–0.6 for structural concrete. Excess water creates voids, reducing strength."},
+      {"q": "Explain the concept of bending moment and shear force diagrams.", "difficulty": "Medium", "answer": "BMD shows how bending moment varies along a beam (max at fixed support/mid-span). SFD shows shear force variation. Where SFD = 0, BMD is maximum — critical design point for flexural stress."}
+    ]
+  },
+  "IT": {
+    "topics": ["Software Engineering", "Cloud Computing", "Cybersecurity", "Networking", "Big Data", "DevOps"],
+    "questions": [
+      {"q": "What is the difference between SQL and NoSQL databases?", "difficulty": "Easy", "answer": "SQL: Relational, ACID, schema-based (MySQL, PostgreSQL). Best for structured data with complex queries. NoSQL: Schema-less, horizontally scalable (MongoDB, Cassandra). Best for unstructured/semi-structured big data."},
+      {"q": "Explain the CIA triad in cybersecurity.", "difficulty": "Easy", "answer": "Confidentiality (only authorized access), Integrity (data not tampered), Availability (system accessible when needed). All security controls are designed around these three pillars."}
+    ]
+  }
+}

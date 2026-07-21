@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block title %}Placement Guidance — EngiHub{% endblock %}
+
+{% block content %}
+
+<div id="toastContainer"></div>
+
+<!-- Page Header -->
+<section class="page-hero">
+  <div class="container position-relative">
+    <div class="page-hero-icon" style="--clr:#8b5cf6"><i class="bi bi-award-fill"></i></div>
+    <h1 class="page-title">Placement Guidance</h1>
+    <p class="text-muted mt-2">Resume tips, aptitude prep, DSA roadmap, and company-specific strategies.</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+
+    <!-- Clickable Stat Cards (accordion expand) -->
+    <div class="row g-3 mb-5">
+
+      <!-- Top MNCs -->
+      <div class="col-md-6 col-lg-3">
+        <div class="tip-card placement-stat-card" style="--clr:#6366f1" onclick="toggleStatCard(this)" role="button" aria-expanded="false">
+          <div class="d-flex align-items-start justify-content-between">
+            <div>
+              <div class="tip-card-icon"><i class="bi bi-building"></i></div>
+              <h6 class="fw-700 mb-1">Top MNCs</h6>
+              <p class="text-muted small mb-0">IT & Service Giants</p>
+            </div>
+            <i class="bi bi-chevron-down stat-chevron text-muted mt-1"></i>
+          </div>
+          <div class="stat-expand">
+            <hr class="my-3" style="border-color:var(--border)">
+            <ul class="list-unstyled d-flex flex-column gap-1 mb-0">
+              <li class="small"><span class="stat-dot" style="background:#6366f1"></span><strong>TCS</strong> — Largest IT recruiter, 40,000+ campus hires/yr. TCS NQT exam.</li>
+              <li class="small"><span class="stat-dot" style="background:#6366f1"></span><strong>Infosys</strong> — Infosys InfyTQ platform, strong fresher program.</li>
+              <li class="small"><span class="stat-dot" style="background:#6366f1"></span><strong>Wipro</strong> — WILP program, service + product roles.</li>
+              <li class="small"><span class="stat-dot" style="background:#6366f1"></span><strong>HCL</strong> — HCL Tech Bee for pre-final year.</li>
+              <li class="small"><span class="stat-dot" style="background:#6366f1"></span><strong>IBM</strong> — IBM SkillsBuild, AI/Cloud focus.</li>
+              <li class="small"><span class="stat-dot" style="background:#6366f1"></span><strong>Accenture</strong> — Massive fresher intake, ATAP program.</li>
+              <li class="small"><span class="stat-dot" style="background:#6366f1"></span><strong>Cognizant</strong> — CTS GenC / GenC Pro tracks.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Roles -->
+      <div class="col-md-6 col-lg-3">
+        <div class="tip-card placement-stat-card" style="--clr:#10b981" onclick="toggleStatCard(this)" role="button" aria-expanded="false">
+          <div class="d-flex align-items-start justify-content-between">
+            <div>
+              <div class="tip-card-icon"><i class="bi bi-cpu"></i></div>
+              <h6 class="fw-700 mb-1">Core Roles</h6>
+              <p class="text-muted small mb-0">Engineering Specializations</p>
+            </div>
+            <i class="bi bi-chevron-down stat-chevron text-muted mt-1"></i>
+          </div>
+          <div class="stat-expand">
+            <hr class="my-3" style="border-color:var(--border)">
+            <ul class="list-unstyled d-flex flex-column gap-1 mb-0">
+              <li class="small"><span class="stat-dot" style="background:#10b981"></span><strong>VLSI Design</strong> — Qualcomm, Intel, Texas Instruments. Skills: Verilog, Cadence.</li>
+              <li class="small"><span class="stat-dot" style="background:#10b981"></span><strong>Embedded Systems</strong> — Bosch, NXP, STMicro. Skills: C, RTOS, ARM.</li>
+              <li class="small"><span class="stat-dot" style="background:#10b981"></span><strong>Power Systems</strong> — Siemens, ABB, BHEL. Skills: MATLAB, Simulink.</li>
+              <li class="small"><span class="stat-dot" style="background:#10b981"></span><strong>AutoCAD / CAD</strong> — L&T, Tata Motors, Mahindra. Skills: CATIA, SolidWorks.</li>
+              <li class="small"><span class="stat-dot" style="background:#10b981"></span><strong>Structural</strong> — L&T Construction, DLF. Skills: STAAD.Pro, Revit.</li>
+              <li class="small"><span class="stat-dot" style="background:#10b981"></span><strong>Process Engg</strong> — Reliance, ONGC. Skills: HAZOP, PFD, HYSYS.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAANG Prep -->
+      <div class="col-md-6 col-lg-3">
+        <div class="tip-card placement-stat-card" style="--clr:#f59e0b" onclick="toggleStatCard(this)" role="button" aria-expanded="false">
+          <div class="d-flex align-items-start justify-content-between">
+            <div>
+              <div class="tip-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+              <h6 class="fw-700 mb-1">FAANG Prep</h6>
+              <p class="text-muted small mb-0">Product Company Track</p>
+            </div>
+            <i class="bi bi-chevron-down stat-chevron text-muted mt-1"></i>
+          </div>
+          <div class="stat-expand">
+            <hr class="my-3" style="border-color:var(--border)">
+            <ul class="list-unstyled d-flex flex-column gap-1 mb-0">
+              <li class="small"><span class="stat-dot" style="background:#f59e0b"></span><strong>Google</strong> — 4-5 rounds; DSA + System Design. LC Hard level.</li>
+              <li class="small"><span class="stat-dot" style="background:#f59e0b"></span><strong>Amazon</strong> — Leadership Principles (STAR) + 2 DSA rounds.</li>
+              <li class="small"><span class="stat-dot" style="background:#f59e0b"></span><strong>Microsoft</strong> — Azure/GitHub teams, behavioral + coding rounds.</li>
+              <li class="small"><span class="stat-dot" style="background:#f59e0b"></span><strong>Meta</strong> — Coding + System Design + Behavioral (3-4 rounds).</li>
+              <li class="small"><span class="stat-dot" style="background:#f59e0b"></span><strong>Resources</strong> — LeetCode Top 150, Grokking SD, Striver Sheet.</li>
+              <li class="small"><span class="stat-dot" style="background:#f59e0b"></span><strong>Timeline</strong> — 6 months solid prep minimum. Mock on Pramp/Interviewing.io.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PSU / Govt -->
+      <div class="col-md-6 col-lg-3">
+        <div class="tip-card placement-stat-card" style="--clr:#ec4899" onclick="toggleStatCard(this)" role="button" aria-expanded="false">
+          <div class="d-flex align-items-start justify-content-between">
+            <div>
+              <div class="tip-card-icon"><i class="bi bi-bank"></i></div>
+              <h6 class="fw-700 mb-1">PSU / Govt</h6>
+              <p class="text-muted small mb-0">Public Sector & Research</p>
+            </div>
+            <i class="bi bi-chevron-down stat-chevron text-muted mt-1"></i>
+          </div>
+          <div class="stat-expand">
+            <hr class="my-3" style="border-color:var(--border)">
+            <ul class="list-unstyled d-flex flex-column gap-1 mb-0">
+              <li class="small"><span class="stat-dot" style="background:#ec4899"></span><strong>GATE</strong> — Gateway for BHEL, NTPC, IOCL, PGCIL, GAIL + IIT/NIT MTech.</li>
+              <li class="small"><span class="stat-dot" style="background:#ec4899"></span><strong>ESE/IES</strong> — UPSC Engineering Services for Civil Services roles.</li>
+              <li class="small"><span class="stat-dot" style="background:#ec4899"></span><strong>ISRO</strong> — Written test + interview; Aerospace/ECE/CSE/MECH.</li>
+              <li class="small"><span class="stat-dot" style="background:#ec4899"></span><strong>DRDO</strong> — CEPTAM/SET exam; Defence R&D labs across India.</li>
+              <li class="small"><span class="stat-dot" style="background:#ec4899"></span><strong>BARC</strong> — OCES/DGFS via GATE; training + scientist role.</li>
+              <li class="small"><span class="stat-dot" style="background:#ec4899"></span><strong>Study Plan</strong> — Start GATE prep by Year 3; use MadeEasy or NPTEL.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /row -->
+
+    <div class="row g-4">
+
+      <!-- Resume Tips -->
+      <div class="col-lg-6">
+        <div class="eh-card h-100">
+          <h5 class="fw-bold mb-3"><i class="bi bi-file-earmark-person-fill text-primary me-2"></i>Resume Tips</h5>
+          <ul class="list-unstyled d-flex flex-column gap-2">
+            {% for tip in [
+              "Use a clean single-column ATS-friendly format (LaTeX or Overleaf templates)",
+              "Lead with a 2-line objective tailored to the JD",
+              "Quantify achievements: 'Improved accuracy by 15%' > 'Improved accuracy'",
+              "List projects with Tech Stack | Problem | Result | GitHub link",
+              "Keep to 1 page for < 2 years experience; 2 pages max otherwise",
+              "Include relevant coursework, certifications (NPTEL, Coursera, IBM badges)",
+              "Put your strongest section first — Projects or Skills for freshers"
+            ] %}
+            <li class="d-flex gap-2 align-items-start">
+              <i class="bi bi-check-circle-fill text-success mt-1 flex-shrink-0"></i>
+              <span class="small">{{ tip }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- DSA Roadmap -->
+      <div class="col-lg-6">
+        <div class="eh-card h-100">
+          <h5 class="fw-bold mb-3"><i class="bi bi-diagram-3-fill text-warning me-2"></i>DSA Roadmap</h5>
+          <div class="d-flex flex-column gap-2">
+            {% for phase in [
+              ("Phase 1 – Basics (2 weeks)","Arrays, Strings, Linked Lists, Stacks, Queues"),
+              ("Phase 2 – Core (3 weeks)","Sorting, Binary Search, Recursion, Hashing, Two Pointers"),
+              ("Phase 3 – Advanced (4 weeks)","Trees, Graphs (BFS/DFS), Dynamic Programming, Heap"),
+              ("Phase 4 – Practice (ongoing)","LeetCode Top 150, Striver's SDE Sheet, CompanyWise lists"),
+            ] %}
+            <div class="p-3 rounded-3" style="background:var(--bg-3);border:1px solid var(--border)">
+              <div class="fw-600 small text-primary mb-1">{{ phase[0] }}</div>
+              <div class="text-muted small">{{ phase[1] }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Aptitude -->
+      <div class="col-lg-6">
+        <div class="eh-card h-100">
+          <h5 class="fw-bold mb-3"><i class="bi bi-calculator-fill text-success me-2"></i>Aptitude &amp; Reasoning</h5>
+          <div class="row g-2">
+            {% for topic in ["Quantitative: Percentages, Ratios, Profit/Loss, TSD",
+                             "Logical: Arrangements, Syllogisms, Blood Relations",
+                             "Verbal: RC, Para-jumbles, Sentence Correction",
+                             "Platforms: IndiaBix, PrepInsta, Unstop, HackerRank",
+                             "Mock Tests: Take 1 full test per week under timed conditions",
+                             "Focus: Speed + Accuracy — skip & return to hard Qs"] %}
+            <div class="col-12">
+              <div class="d-flex gap-2 align-items-start small">
+                <i class="bi bi-arrow-right-circle text-success flex-shrink-0 mt-1"></i>
+                <span class="text-muted">{{ topic }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Company Prep -->
+      <div class="col-lg-6">
+        <div class="eh-card h-100">
+          <h5 class="fw-bold mb-3"><i class="bi bi-building-fill text-danger me-2"></i>Company-Specific Prep</h5>
+          <div class="d-flex flex-column gap-2">
+            {% for comp in [
+              ("FAANG / Product","LeetCode Hard, System Design, Behavioral (STAR)","#ef4444"),
+              ("Mass Recruiters (TCS, Infosys)","TCS NQT, Infosys Instep — aptitude + verbal focus","#f59e0b"),
+              ("Core Engineering (L&T, ISRO)","Subject knowledge, GATE score, project depth","#10b981"),
+              ("PSU / GATE Path","GATE rank, interview on core subjects + HR","#6366f1"),
+            ] %}
+            <div class="d-flex gap-3 align-items-start p-3 rounded-3" style="background:var(--bg-3);border:1px solid var(--border)">
+              <span class="d-block rounded-2 flex-shrink-0" style="width:6px;height:100%;background:{{ comp[2] }};min-height:40px"></span>
+              <div>
+                <div class="fw-600 small mb-1" style="color:{{ comp[2] }}">{{ comp[0] }}</div>
+                <div class="text-muted small">{{ comp[1] }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- HR Round -->
+      <div class="col-12">
+        <div class="eh-card">
+          <h5 class="fw-bold mb-3"><i class="bi bi-people-fill text-info me-2"></i>HR Round Essentials</h5>
+          <div class="row g-3">
+            {% for q in [
+              ("Tell me about yourself","Prepare a 90-second structured pitch: Education → Skills → Projects → Goal"),
+              ("Strengths & Weaknesses","Be specific and genuine; turn weakness into a growth story"),
+              ("Why this company?","Research the company; mention specific projects, values, or products"),
+              ("Where do you see yourself in 5 years?","Align with the role; show ambition + commitment"),
+              ("Salary expectations","Research market rates; give a range confidently"),
+              ("Do you have questions?","Always ask 2–3 thoughtful questions about role, team, or growth"),
+            ] %}
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 rounded-3 h-100" style="background:var(--bg-3);border:1px solid var(--border)">
+                <div class="fw-600 small text-primary mb-1">"{{ q[0] }}"</div>
+                <div class="text-muted small">{{ q[1] }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+  .placement-stat-card {
+    cursor: pointer;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    user-select: none;
+  }
+  .placement-stat-card:hover {
+    border-color: var(--clr, var(--primary));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  }
+  .placement-stat-card.open {
+    border-color: var(--clr, var(--primary));
+    background: color-mix(in srgb, var(--clr, var(--primary)) 4%, var(--card-bg));
+  }
+  .stat-expand {
+    display: none;
+    animation: expandIn 0.22s ease;
+  }
+  .placement-stat-card.open .stat-expand { display: block; }
+  @keyframes expandIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .stat-chevron {
+    transition: transform 0.25s ease;
+    font-size: 0.85rem;
+  }
+  .placement-stat-card.open .stat-chevron { transform: rotate(180deg); }
+  .stat-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+</style>
+<script>
+function toggleStatCard(el) {
+  el.classList.toggle('open');
+  el.setAttribute('aria-expanded', el.classList.contains('open'));
+}
+</script>
+{% endblock %}

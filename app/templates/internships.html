@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Internship Portal — EngiHub{% endblock %}
+
+{% block content %}
+<div id="toastContainer"></div>
+
+<section class="page-hero">
+  <div class="container position-relative">
+    <div class="page-hero-icon" style="--clr:#10b981"><i class="bi bi-briefcase-fill"></i></div>
+    <h1 class="page-title">Internship Portal</h1>
+    <p class="text-muted mt-2">Discover internships filtered by branch, location, and type.</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+
+    <!-- Filter Bar -->
+    <div class="filter-bar mb-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label">Branch</label>
+          <select class="form-select" id="fBranch"><option value="">All</option>
+            {% for b in branches %}{% if b != 'All' %}<option>{{ b }}</option>{% endif %}{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Location</label>
+          <select class="form-select" id="fLocation"><option value="">All</option>
+            {% for l in locations %}{% if l != 'All' %}<option>{{ l }}</option>{% endif %}{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="fType"><option value="">All</option>
+            {% for t in types %}{% if t != 'All' %}<option>{{ t }}</option>{% endif %}{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Search</label>
+          <input class="form-control" id="fSearch" placeholder="Company or title…" />
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-primary-glow w-100" onclick="applyFilter()"><i class="bi bi-search"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Count -->
+    <p class="text-muted small mb-3" id="countLabel"></p>
+
+    <!-- Cards Grid -->
+    <div class="row g-4" id="internshipGrid">
+      {% for item in internships %}
+      <div class="col-md-6 col-lg-4">
+        <div class="resource-card">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h6 class="fw-bold mb-0">{{ item.title }}</h6>
+            <span class="resource-tag {% if item.type=='Paid' %}tag-paid{% elif item.type=='Unpaid' %}tag-unpaid{% else %}tag-stipend{% endif %}">
+              {{ item.type }}
+            </span>
+          </div>
+          <p class="text-muted small mb-1"><i class="bi bi-building me-1"></i>{{ item.company }}</p>
+          <p class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>{{ item.location }}</p>
+          {% if item.stipend %}
+          <p class="text-muted small mb-1"><i class="bi bi-cash me-1"></i>{{ item.stipend }}</p>
+          {% endif %}
+          <p class="text-muted small mb-2"><i class="bi bi-clock me-1"></i>{{ item.duration }}</p>
+          <div class="d-flex flex-wrap gap-1 mb-3">
+            {% for b in item.branches %}
+            <span class="resource-tag" style="background:rgba(99,102,241,0.1);color:var(--primary-2);border:1px solid rgba(99,102,241,0.25);font-size:.7rem">{{ b }}</span>
+            {% endfor %}
+          </div>
+          <p class="text-muted small mb-3">{{ item.description }}</p>
+          <a href="{{ item.link or '#' }}" target="_blank" class="btn btn-sm btn-primary-glow w-100" {% if not item.link %}style="opacity:.5;pointer-events:none"{% endif %}>
+            <i class="bi bi-box-arrow-up-right me-1"></i>Apply Now
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div id="noResults" class="text-center py-5 d-none">
+      <div style="font-size:3rem;opacity:.2">🔍</div>
+      <p class="text-muted mt-2">No internships match your filters.</p>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Set initial count
+document.getElementById('countLabel').textContent =
+  document.querySelectorAll('#internshipGrid .resource-card').length + ' internships listed';
+
+async function applyFilter() {
+  const branch   = document.getElementById('fBranch').value;
+  const location = document.getElementById('fLocation').value;
+  const type     = document.getElementById('fType').value;
+  const search   = document.getElementById('fSearch').value.trim();
+
+  const params = new URLSearchParams({
+    branch: branch || 'All',
+    location: location || 'All',
+    type: type || 'All',
+    search
+  });
+
+  const res  = await fetch('/internships/filter?' + params);
+  const data = await res.json();
+
+  const grid = document.getElementById('internshipGrid');
+  const none = document.getElementById('noResults');
+
+  if (!data.length) {
+    grid.innerHTML = ''; none.classList.remove('d-none');
+    document.getElementById('countLabel').textContent = '0 results';
+    return;
+  }
+
+  none.classList.add('d-none');
+  grid.innerHTML = data.map(item => `
+    <div class="col-md-6 col-lg-4">
+      <div class="resource-card">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h6 class="fw-bold mb-0">${item.title}</h6>
+          <span class="resource-tag ${item.type==='Paid'?'tag-paid':item.type==='Unpaid'?'tag-unpaid':'tag-stipend'}">${item.type}</span>
+        </div>
+        <p class="text-muted small mb-1"><i class="bi bi-building me-1"></i>${item.company}</p>
+        <p class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>${item.location}</p>
+        ${item.stipend ? `<p class="text-muted small mb-1"><i class="bi bi-cash me-1"></i>${item.stipend}</p>` : ''}
+        <p class="text-muted small mb-2"><i class="bi bi-clock me-1"></i>${item.duration}</p>
+        <div class="d-flex flex-wrap gap-1 mb-3">
+          ${(item.branches||[]).map(b=>`<span class="resource-tag" style="background:rgba(99,102,241,0.1);color:var(--primary-2);border:1px solid rgba(99,102,241,0.25);font-size:.7rem">${b}</span>`).join('')}
+        </div>
+        <p class="text-muted small mb-3">${item.description}</p>
+        <a href="${item.link || '#'}" target="_blank" class="btn btn-sm btn-primary-glow w-100" ${!item.link ? 'style="opacity:.5;pointer-events:none"' : ''}>
+          <i class="bi bi-box-arrow-up-right me-1"></i>Apply Now
+        </a>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('countLabel').textContent = data.length + ' internships found';
+}
+
+// Search on Enter
+document.getElementById('fSearch').addEventListener('keydown', e => { if(e.key==='Enter') applyFilter(); });
+</script>
+{% endblock %}

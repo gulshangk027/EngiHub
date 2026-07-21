@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}AI Doubt Solver — EngiHub{% endblock %}
+
+{% block content %}
+<div id="toastContainer"></div>
+
+<!-- Page Header -->
+<section class="page-hero">
+  <div class="container position-relative">
+    <div class="page-hero-icon" style="--clr:#6366f1"><i class="bi bi-chat-dots-fill"></i></div>
+    <h1 class="page-title">AI Doubt Solver</h1>
+    <p class="text-muted mt-2">Ask any engineering question — get instant AI-generated answers and step-by-step explanations.</p>
+  </div>
+</section>
+
+<section class="py-4">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- Sidebar -->
+      <div class="col-lg-3">
+        <div class="eh-card mb-3">
+          <label class="form-label">Your Branch</label>
+          <select class="form-select" id="branchSelect">
+            {% for b in branches %}
+            <option>{{ b }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="eh-card mb-3">
+          <h6 class="fw-bold mb-3 small text-muted text-uppercase">Quick Topics</h6>
+          <div class="d-flex flex-wrap gap-2" id="quickTopics">
+            {% for t in ["FFT","Op-Amp","MOSFET","Modulation","Laplace","DBMS","OS","Pointers","PID Control","Thermodynamics"] %}
+            <button class="btn btn-sm branch-chip" onclick="quickAsk('{{ t }}')">{{ t }}</button>
+            {% endfor %}
+          </div>
+        </div>
+        <button class="btn btn-outline-glow w-100 btn-sm" onclick="clearChat()">
+          <i class="bi bi-trash me-1"></i>Clear Chat
+        </button>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="col-lg-9">
+        <div class="eh-card p-0 overflow-hidden chat-wrap">
+
+          <!-- Messages -->
+          <div class="chat-messages" id="chatMessages">
+            <div class="msg ai">
+              <div class="msg-avatar"><i class="bi bi-robot"></i></div>
+              <div>
+                <div class="msg-bubble">
+                  👋 Hi! I'm EngiHub AI.<br>
+                  Ask me anything — formulas, derivations, concepts, exam answers. Let's go! 🚀
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Bar -->
+          <div class="chat-input-bar">
+            <textarea class="form-control flex-grow-1" id="questionInput" rows="1"
+              placeholder="Ask your doubt here… (Shift+Enter for new line)"
+              style="resize:none;max-height:140px"
+              oninput="autoResize(this)"
+              onkeydown="handleKey(event)"></textarea>
+            <button class="btn btn-primary-glow px-3 py-2" id="sendBtn" onclick="sendQuestion()">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+
+        </div>
+        <div class="text-end mt-1">
+          <small class="text-muted" id="modelInfo"></small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let isLoading = false;
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQuestion(); }
+}
+
+function scrollBottom() {
+  const box = document.getElementById('chatMessages');
+  box.scrollTop = box.scrollHeight;
+}
+
+function appendMsg(role, content, modelUsed) {
+  const box = document.getElementById('chatMessages');
+  const isUser = role === 'user';
+  const div = document.createElement('div');
+  div.className = 'msg ' + (isUser ? 'user' : 'ai');
+  div.innerHTML = `
+    <div class="msg-avatar"><i class="bi bi-${isUser ? 'person-fill' : 'robot'}"></i></div>
+    <div>
+      <div class="msg-bubble">${isUser ? escHtml(content) : marked.parse(content)}</div>
+      ${modelUsed ? `<div class="msg-meta">⚡ ${modelUsed}</div>` : ''}
+    </div>`;
+  box.appendChild(div);
+  scrollBottom();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showTyping() {
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.id = 'typingIndicator'; div.className = 'msg ai';
+  div.innerHTML = `<div class="msg-avatar"><i class="bi bi-robot"></i></div>
+    <div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>`;
+  box.appendChild(div); scrollBottom();
+}
+
+async function sendQuestion() {
+  if (isLoading) return;
+  const input  = document.getElementById('questionInput');
+  const branch = document.getElementById('branchSelect').value;
+  const q = input.value.trim();
+  if (!q) return;
+
+  appendMsg('user', q);
+  input.value = ''; input.style.height = 'auto';
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  showTyping();
+
+  try {
+    const res  = await fetch('/doubt/ask', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({question: q, branch})
+    });
+    const data = await res.json();
+    document.getElementById('typingIndicator')?.remove();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    appendMsg('ai', data.answer, data.model_used);
+    document.getElementById('modelInfo').textContent = '⚡ ' + (data.model_used || '');
+  } catch(e) {
+    document.getElementById('typingIndicator')?.remove();
+    appendMsg('ai', '⚠️ ' + e.message);
+    showToast(e.message, 'danger');
+  } finally {
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+  }
+}
+
+function quickAsk(topic) {
+  document.getElementById('questionInput').value = 'Explain ' + topic + ' for engineering exam.';
+  sendQuestion();
+}
+
+async function clearChat() {
+  await fetch('/doubt/clear', {method:'POST'});
+  const box = document.getElementById('chatMessages');
+  box.innerHTML = `<div class="msg ai">
+    <div class="msg-avatar"><i class="bi bi-robot"></i></div>
+    <div><div class="msg-bubble">Chat cleared! Ask me anything 🚀</div></div>
+  </div>`;
+  showToast('Chat cleared', 'info');
+}
+</script>
+{% endblock %}
